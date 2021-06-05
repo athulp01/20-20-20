@@ -8,5 +8,6 @@ This program turns off your monitor after every 20 minutes for 20 seconds. It wi
 
 # Installation
 1. `make && make install`
-2. Create a systemd service to run this as daemon.
-3. Create a keybinding to send SIGUSR1 to the process.
+2. `systemctl --user enable unstrain`
+3. `systemctl --user start unstrain`
+4. Create a keybinding to send SIGUSR1 to the process.
