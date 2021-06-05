@@ -24,6 +24,11 @@ static void set_screen_state(unsigned short state) {
 //timeout and interval are in seconds
 static void lock(unsigned int timeout, unsigned int interval) {
   sleep(timeout - 60);
+  if (is_reset) {
+    is_reset = 0;
+    system("notify-send \"Timer reset\" -u normal -t 1000");
+    return;
+  }
   system("notify-send \"Screen will be turned off in 1 minute. Pass SIGUSR1 to "
          "reset the timer\" -u normal -t 5000");
   sleep(60);
