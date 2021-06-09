@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static unsigned short is_reset;
+static unsigned char is_reset;
 
 static void set_screen_state(unsigned short state) {
   Display *dpy;
