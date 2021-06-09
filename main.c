@@ -5,17 +5,22 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-unsigned short is_reset;
+static unsigned short is_reset;
 
 static void set_screen_state(unsigned short state) {
   Display *dpy;
   if (!(dpy = XOpenDisplay(0)))
     errx(1, "cannot open display '%s'", XDisplayName(0));
   DPMSEnable(dpy);
-  if (state)
-    DPMSForceLevel(dpy, DPMSModeOn);
-  else
-    DPMSForceLevel(dpy, DPMSModeOff);
+  CARD16 standby;
+  BOOL onoff;
+  DPMSInfo(dpy, &standby, &onoff);
+  if (onoff == DPMSModeOn) {
+    if (state)
+      DPMSForceLevel(dpy, DPMSModeOn);
+    else
+      DPMSForceLevel(dpy, DPMSModeOff);
+  }
   XSync(dpy, False);
   return;
 }
@@ -27,11 +32,11 @@ static void reset() {
   }
 }
 
-//Turn off screen after every timeout seconds for interval seconds;
-//timeout and interval are in seconds
+// Turn off screen after every timeout seconds for interval seconds;
+// timeout and interval are in seconds
 static void lock(unsigned int timeout, unsigned int interval) {
   sleep(timeout - 60);
-  reset(); //signal will wake this sleep, if user presses the key
+  reset(); // signal will wake this sleep, if user presses the key
   system("notify-send \"Screen will be turned off in 1 minute. Pass SIGUSR1 to "
          "reset the timer\" -u normal -t 5000");
   sleep(60);
@@ -42,7 +47,6 @@ static void lock(unsigned int timeout, unsigned int interval) {
   reset();
   return;
 }
-
 
 static void handle_sigusr1(int sig) {
   is_reset = 1;
