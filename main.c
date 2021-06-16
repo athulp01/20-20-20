@@ -2,6 +2,7 @@
 #include <X11/extensions/dpms.h>
 #include <err.h>
 #include <signal.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -15,7 +16,7 @@ static void set_screen_state(unsigned short state) {
   CARD16 standby;
   BOOL onoff;
   DPMSInfo(dpy, &standby, &onoff);
-  if (onoff == DPMSModeOn) {
+  if (onoff == DPMSModeStandby) {
     if (state)
       DPMSForceLevel(dpy, DPMSModeOn);
     else
@@ -54,8 +55,7 @@ static void handle_sigusr1(int sig) {
 }
 
 int main() {
+  printf("dafa");
   signal(SIGUSR1, handle_sigusr1);
-  while (1) {
-    lock(1200, 20);
-  }
+  set_screen_state(1);
 }
